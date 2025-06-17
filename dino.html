@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Scanner UI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      max-width: 400px;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+    }
+
+    input[type="file"] {
+      margin: 1rem 0;
+    }
+
+    #qr-result {
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #2b9348;
+    }
+
+    img {
+      max-width: 100%;
+      margin-top: 1rem;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>QR Code Scanner</h2>
+    <input type="file" accept="image/*" id="file-input">
+    <p id="qr-result">Upload a QR image to scan</p>
+    <img id="preview" style="display: none;">
+  </div>
+
+  <script type="module">
+    import QrScanner from 'https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.min.js';
+
+    const fileInput = document.getElementById('file-input');
+    const resultText = document.getElementById('qr-result');
+    const previewImg = document.getElementById('preview');
+
+    fileInput.addEventListener('change', event => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const imgUrl = URL.createObjectURL(file);
+      previewImg.src = imgUrl;
+      previewImg.style.display = 'block';
+
+      QrScanner.scanImage(file, { returnDetailedScanResult: true })
+        .then(result => {
+          resultText.textContent = `📦 Nội dung: ${result.data}`;
+        })
+        .catch(() => {
+          resultText.textContent = '⚠️ Không thể quét mã QR từ ảnh này.';
+        });
+    });
+  </script>
+</body>
+</html>
